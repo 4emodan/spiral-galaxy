@@ -1,3 +1,3 @@
 class Settings implements DataClass {
-	var orbitsCount : Int;
+	var starsCount : Int;
 }
