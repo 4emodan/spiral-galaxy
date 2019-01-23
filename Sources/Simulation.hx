@@ -37,7 +37,7 @@ class Simulation {
 	public static inline var HEIGHT = 240;
 
 	public function new() {
-		settings = new Settings(10000, 1.25);
+		settings = new Settings(30000, 1.25);
 		gameControls = new GameControls(Mouse.get().toOption());
 		init();
 	}
@@ -118,7 +118,8 @@ class Simulation {
 	}
 
 	function drawStar(star:Star, g:kha.graphics2.Graphics) {
-		g.drawRect(star.center.x - star.radius, star.center.y - star.radius, star.radius * 2, star.radius * 2);
+		var starRadius = 0.1;
+		g.drawRect(star.center.x - starRadius, star.center.y - starRadius, starRadius * 2, starRadius * 2, starRadius * 2);
 	}
 
 	function drawOrbit(orbit:Orbit, g:kha.graphics2.Graphics) {

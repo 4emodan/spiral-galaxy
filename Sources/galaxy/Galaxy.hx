@@ -10,7 +10,9 @@ import galaxy.Star;
 import galaxy.SurfaceBrightness.GalaxySurfaceBrightnessLaw;
 import math.Random.InvertedCumulativeDistributionFunction;
 
-using Utils.OrbitExtensions;
+using Utils.OrbitUtils;
+using Utils.StarTypeUtils;
+using Star.StarTypeExtensions;
 
 class Galaxy {
 	public var center(default, null):Point;
@@ -43,11 +45,12 @@ class Galaxy {
 
 		return [
 			for (i in 1...count) {
-				var radius = i * farRadius / count;
-				// var radius = invertedCdf(random.GetFloat());
+				// var radius = i * farRadius / count;
+				var radius = invertedCdf(random.GetFloat());
 
 				var orbit = new Orbit(center, radius, radius * getExcentricity(radius), radius * angleCoef);
-				new Star(orbit.randomPoint(random), starRadius, orbit);
+				var type = StarType.G;
+				new Star(orbit.randomPoint(random), orbit, type, type.randomTemperature(random), type.randomRadius(random), type.randomLuminosity(random));
 			}
 		];
 	}
