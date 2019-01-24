@@ -29,6 +29,11 @@ class OrbitUtils {
 }
 
 class StarTypeUtils {
+	public static function random(e:Enum<StarType>, r:Random):StarType {
+		var i = r.GetIn(0, e.getConstructors().length - 1);
+		return e.createByIndex(i);
+	}
+
 	public static function randomTemperature(t:StarType, r:Random):Kelvin {
 		return t.temperature().random(r);
 	}

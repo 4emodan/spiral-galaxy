@@ -1,5 +1,6 @@
 package galaxy;
 
+import haxe.EnumTools;
 import kha.Scheduler;
 import kha.math.FastVector2;
 import kha.math.FastMatrix3;
@@ -49,7 +50,7 @@ class Galaxy {
 				var radius = invertedCdf(random.GetFloat());
 
 				var orbit = new Orbit(center, radius, radius * getExcentricity(radius), radius * angleCoef);
-				var type = StarType.G;
+				var type = StarType.random(random);
 				new Star(orbit.randomPoint(random), orbit, type, type.randomTemperature(random), type.randomRadius(random), type.randomLuminosity(random));
 			}
 		];

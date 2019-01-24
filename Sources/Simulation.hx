@@ -13,6 +13,7 @@ import Model.Point;
 import Settings;
 import galaxy.Galaxy;
 import GameControls;
+import render.Stars.StarRenderer;
 
 using Utils.OptionExtensions;
 using Ellipse.EllipseExtensions;
@@ -119,6 +120,7 @@ class Simulation {
 
 	function drawStar(star:Star, g:kha.graphics2.Graphics) {
 		var starRadius = 0.1;
+		g.color = StarRenderer.getColor(star.temperature);
 		g.drawRect(star.center.x - starRadius, star.center.y - starRadius, starRadius * 2, starRadius * 2, starRadius * 2);
 	}
 
@@ -130,13 +132,16 @@ class Simulation {
 	}
 
 	function debugDraw(g:kha.graphics2.Graphics) {
-		g.drawLine(viewport.centerX, 0, viewport.centerX, viewport.h, 0.8);
-		g.drawLine(0, viewport.centerY, viewport.w, viewport.centerY, 0.8);
-
-		g.drawRect(0, 0, 320, 240);
-		g.color = Color.Cyan;
-		// g.drawRect(0, 0, 240, 180);
-		g.drawRect(40, 30, 240, 180);
-		// g.drawRect(1, 1, 318, 238);
+		var t = 60000.0;
+		var x = 0.0;
+		while (t >= 2000) {
+			g.color = StarRenderer.getColor(t);
+			g.drawRect(x, 0, 1, 1);
+			if (t == 7500) {
+				g.drawRect(x, -5, 1, 10);
+			}
+			x += 1;
+			t -= 100;
+		}
 	}
 }
