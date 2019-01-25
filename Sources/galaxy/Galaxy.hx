@@ -38,19 +38,20 @@ class Galaxy {
 	function generateStars(count:Int):Array<Star> {
 		var random = new Random(randomSeed);
 
-		var starRadius = 0.1;
 		var angleCoef = 0.042;
 
 		var brightnessLaw = GalaxySurfaceBrightnessLaw.get(0.01, farRadius / 3, coreRadius, farRadius);
 		var invertedCdf = InvertedCumulativeDistributionFunction.forLaw(brightnessLaw, 48, 0, farRadius);
 
+		var randomStarType = StarType.randomizer(random, StarTypeExtensions.occurence); 
+
 		return [
 			for (i in 1...count) {
 				// var radius = i * farRadius / count;
-				var radius = invertedCdf(random.GetFloat());
+				var orbitRadius = invertedCdf(random.GetFloat());
 
-				var orbit = new Orbit(center, radius, radius * getExcentricity(radius), radius * angleCoef);
-				var type = StarType.random(random);
+				var orbit = new Orbit(center, orbitRadius, orbitRadius * getExcentricity(orbitRadius), orbitRadius * angleCoef);
+				var type = randomStarType();
 				new Star(orbit.randomPoint(random), orbit, type, type.randomTemperature(random), type.randomRadius(random), type.randomLuminosity(random));
 			}
 		];

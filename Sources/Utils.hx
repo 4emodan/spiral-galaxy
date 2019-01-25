@@ -22,8 +22,21 @@ class IntRangeUtils {
 		return r.GetIn(i.from, i.to);
 	}
 }
+
 class FloatRangeUtils {
 	public static function random(f:FloatRange, r:Random) {
 		return r.GetFloatIn(f.from, f.to);
+	}
+}
+
+class FloatUtils {
+	public static function compare(f1:Float, f2:Float):Int {
+		return if (f1 == f2) {
+			0;
+		} else if (f1 < f2) {
+			-1;
+		} else {
+			1;
+		}
 	}
 }

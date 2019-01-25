@@ -20,7 +20,7 @@ enum StarType {
 
 class StarTypeExtensions {
 	/**
-	 * return a star class temperature range in Kelvins.
+	 * @return a star class temperature range in Kelvins.
 	 */
 	public static function temperature(t:StarType):IntRange {
 		return switch (t) {
@@ -42,7 +42,7 @@ class StarTypeExtensions {
 	}
 
 	/**
-	 * return a star class luminosity range in solar units.
+	 * @return a star class luminosity range in solar units.
 	 */
 	public static function luminosity(t:StarType):FloatRange {
 		return switch (t) {
@@ -64,7 +64,7 @@ class StarTypeExtensions {
 	}
 
 	/**
-	 * return a star class radius range relevant to the Sun.
+	 * @return a star class radius range relevant to the Sun.
 	 */
 	public static function radius(t:StarType):FloatRange {
 		return switch (t) {
@@ -82,6 +82,28 @@ class StarTypeExtensions {
 				{from: 0.75, to: 0.9};
 			case M:
 				{from: 0.1, to: 0.75};
+		}
+	}
+
+	/**
+	 * @return probability to meet a star of this type in a galaxy.
+	 */
+	public static function occurence(t:StarType):Float {
+		return switch (t) {
+			case O:
+				0.0000003;
+			case B:
+				0.00125;
+			case A:
+				0.00625;
+			case F:
+				0.0303;
+			case G:
+				0.075;
+			case K:
+				0.12;
+			case M:
+				0.76;
 		}
 	}
 }
