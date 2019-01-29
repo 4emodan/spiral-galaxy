@@ -1,3 +1,5 @@
+import haxe.ds.Map;
+import kha.Image;
 import kha.input.Mouse;
 import galaxy.Orbit;
 import galaxy.Star;
@@ -38,7 +40,7 @@ class Simulation {
 	public static inline var HEIGHT = 240;
 
 	public function new() {
-		settings = new Settings(30000, 1.25);
+		settings = new Settings(100000, 1.25);
 		gameControls = new GameControls(Mouse.get().toOption());
 		init();
 	}
@@ -118,10 +120,29 @@ class Simulation {
 		g.end();
 	}
 
+	var haloBank:Map<Int, Image> = [];
+	var haloTemplate : Image = null;
+
 	function drawStar(star:Star, g:kha.graphics2.Graphics) {
-		var starRadius = 0.1;
-		g.color = StarRenderer.getColor(star.temperature);
-		g.drawRect(star.center.x - starRadius, star.center.y - starRadius, starRadius * 2, starRadius * 2, starRadius * 2);
+		var sunRadius = 0.075;
+		var starRadius = sunRadius * star.radius;
+		var starColor = StarRenderer.getColor(star.temperature);
+		g.color = starColor;
+		// g.drawRect(star.center.x - starRadius, star.center.y - starRadius, starRadius * 2, starRadius * 2, starRadius * 2);
+
+		// g.color = Color.White;
+		// var halo = haloBank[starColor];
+		// if (halo == null) {
+		// 	halo = StarRenderer.getHalo(star);
+		// 	haloBank[starColor] = halo;
+		// }
+		var halo = haloTemplate;
+		if (halo == null) {
+			haloTemplate = StarRenderer.getHalo(star);
+			halo = haloTemplate;
+		}
+		var sw = starRadius * 4;
+		g.drawScaledImage(halo, star.center.x - sw / 2, star.center.y - sw / 2, sw, sw);
 	}
 
 	function drawOrbit(orbit:Orbit, g:kha.graphics2.Graphics) {
