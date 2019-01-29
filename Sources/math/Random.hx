@@ -4,18 +4,23 @@ import haxe.ds.Vector;
 
 private typedef CumulativeDistributionFunction = Vector<Float>;
 
-class InvertedCumulativeDistributionFunction {
+/**
+ * Represents inverted cumulative distribution function.
+ */
+class InvertedCdf {
 	public static function forLaw(law:Float->Float, intervals:Int, min:Float, max:Float):Float->Float {
-		var dx = (max - min) / intervals;
-		var halfDx = dx / 2;
+		var width = (max - min) / intervals; // interval width
+		var halfWidth = width / 2;
 
 		var sum = 0.0;
 		var cdf = new Vector(intervals + 1);
 		for (i in 0...intervals) {
-			var x = min + dx * i + halfDx;
-			sum += law(x) * dx;
+			var intervalCenter = min + width * i + halfWidth;
+			sum += law(intervalCenter) * width;
 			cdf[i + 1] = sum;
 		}
+
+		// Normalize interval values to make sure CDF builds up to 1
 		for (i in 0...cdf.length) {
 			cdf[i] /= sum;
 		}
@@ -23,14 +28,14 @@ class InvertedCumulativeDistributionFunction {
 		cdf[cdf.length - 1] = 1;
 
 		return function(probability:Float):Float {
+			// We don't really invert the CDF. Instead, we just search for the right interval.
 			var i = searchCdf(probability, cdf);
-			var dxPart = if (i == cdf.length - 1) {
+			var widthPart = if (i == cdf.length - 1) {
 				0;
 			} else {
-				(probability - cdf[i]) * dx / (cdf[i + 1] - cdf[i]);
+				(probability - cdf[i]) * width / (cdf[i + 1] - cdf[i]);
 			};
-
-			return min + i * dx + dxPart;
+			return min + i * width + widthPart;
 		}
 	}
 
@@ -52,6 +57,7 @@ class InvertedCumulativeDistributionFunction {
 			return i;
 		}
 
+		// Make a guess first, then iterate up or down from the guess value.
 		var guessInterval = Std.int(value * cdf.length);
 		return find(guessInterval, if (value < cdf[guessInterval]) -1 else 1);
 	}

@@ -47,7 +47,7 @@ class Simulation {
 		var target:Window = {w: WIDTH, h: HEIGHT};
 
 		viewport = ViewportExtensions.setup(original, target);
-		galaxy = new Galaxy(viewport.center(), settings.coreRadius, settings.diskRadius, settings.farRadius, settings.starsCount);
+		galaxy = new Galaxy(settings, viewport.center());
 	}
 
 	public function update():Void {
@@ -116,14 +116,28 @@ class Simulation {
 	}
 
 	function debugDraw(g:kha.graphics2.Graphics) {
-		function drawOrbit(orbit:Orbit, g:kha.graphics2.Graphics) {
-			var e = new Ellipse(orbit.center, orbit.angle, orbit.a, orbit.b, 36);
+		function drawEllipse(e:Ellipse) {
 			for (s in e.segments()) {
 				g.drawLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y, 0.5);
 			}
 		}
-		for (star in galaxy.stars) {
-			drawOrbit(star.orbit, g);
+		function drawOrbit(orbit:Orbit, g:kha.graphics2.Graphics) {
+			var e = new Ellipse(orbit.center, orbit.angle, orbit.a, orbit.b, 36);
+			drawEllipse(e);
 		}
+
+		var count = 100;
+		var width = Std.int(galaxy.stars.length / count);
+		for (i in 0...count) {
+			drawOrbit(galaxy.stars[i * width].orbit, g);
+		}
+
+		g.color = Color.Yellow;
+		var circle = new Ellipse(galaxy.center, 0, settings.coreRadius, settings.coreRadius, 36);
+		drawEllipse(circle);
+
+		g.color = Color.Yellow;
+		circle = new Ellipse(galaxy.center, 0, settings.diskRadius, settings.diskRadius, 36);
+		drawEllipse(circle);
 	}
 }

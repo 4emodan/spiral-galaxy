@@ -1,8 +1,16 @@
 package galaxy;
 
-class GalaxySurfaceBrightnessLaw {
-	public static function get(k:Float, rd:Float, coreRadius:Float, galaxyRadius:Float):Float->Float {
-		return surfaceBrightness.bind(_, 1, k, rd, coreRadius, galaxyRadius);
+/**
+ * Surface brightness according to de Vaucouleurs' law and Freeman formula for the galaxy's disk.
+ */
+class GalaxySurfaceBrightness {
+	/**
+	 * @param halfBrihtnessRadius radius at which the brightness decreases by 50%
+	 */
+	public static function setupLaw(halfBrihtnessRadius:Float, coreRadius:Float, galaxyRadius:Float):Float->Float {
+		var k = Math.pow(coreRadius, 0.75) / halfBrihtnessRadius;
+		trace('K=$k');
+		return surfaceBrightness.bind(_, 1, k, halfBrihtnessRadius, coreRadius, galaxyRadius);
 	}
 
 	static function surfaceBrightness(r:Float, i0:Float, k:Float, rd:Float, coreRadius:Float, galaxyRadius:Float):Float {

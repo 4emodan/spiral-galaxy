@@ -12,7 +12,7 @@ class Main {
 		System.start({title: "Starfield", width: 1024, height: 768}, function(_) {
 			// Just loading everything is ok for small projects
 			Assets.loadEverything(function() {
-				var settings = new Settings(1.25, 100000, 15, 200, 500, 0.075);
+				var settings = new Settings(1.25, 100000, 15, 200, 500, 0.075, 0.042, 0.65, 1);
 				var simulation = new Simulation(settings);
 
 				// Avoid passing update/render directly,

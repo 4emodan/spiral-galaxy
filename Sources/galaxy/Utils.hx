@@ -36,7 +36,11 @@ class StarTypeUtils {
 		return e.createByIndex(i);
 	}
 
-	public static function randomizer(e:Enum<StarType>, r:Random, distribution:StarType->Float):Void->StarType {
+	/**
+	 * Creates a function that will return a random star type each time with regard to
+	 * occurence values of star types.
+	 */
+	public static function randomizer(e:Enum<StarType>, r:Random):Void->StarType {
 		var typeOccurences = [
 			for (i in 0...e.getConstructors().length) {
 				var t = e.createByIndex(i);
@@ -48,11 +52,13 @@ class StarTypeUtils {
 			return a.occurence.compare(b.occurence);
 		});
 
+		// Basically occurence values build up a CDF, so we use uniform distribution to transform it
+		// into the real star type distribution.
 		return function():StarType {
-			var u = r.GetFloat();
+			var uniform = r.GetFloat();
 			var sum = 0.0;
 			for (to in typeOccurences) {
-				if (u <= sum + to.occurence) {
+				if (uniform <= sum + to.occurence) {
 					return to.type;
 				}
 				sum += to.occurence;

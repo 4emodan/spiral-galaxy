@@ -8,8 +8,8 @@ import kha.math.Random;
 import Ellipse;
 import Model.Point;
 import galaxy.Star;
-import galaxy.SurfaceBrightness.GalaxySurfaceBrightnessLaw;
-import math.Random.InvertedCumulativeDistributionFunction;
+import galaxy.Brightness.GalaxySurfaceBrightness;
+import math.Random.InvertedCdf;
 
 using Utils.OrbitUtils;
 using Utils.StarTypeUtils;
@@ -18,58 +18,60 @@ using Star.StarTypeExtensions;
 class Galaxy {
 	public var center(default, null):Point;
 	public var coreRadius(default, null):Float;
-	public var outerRadius(default, null):Float;
+	public var diskRadius(default, null):Float;
 	public var farRadius(default, null):Float;
+	public var orbitAngleFactor(default, null):Float;
+	public var orbitExcentricityCore(default, null):Float;
+	public var orbitExcentricityDisk(default, null):Float;
 	//
-	public var orbits(default, null):Array<Ellipse>;
 	public var stars(default, null):Array<Star>;
 
 	var randomSeed:Int;
 
-	public function new(center:Point, coreRadius:Float, outerRadius:Float, farRadius:Float, starsCount:Int) {
+	public function new(settings:Settings, center:Point) {
 		this.center = center;
-		this.coreRadius = coreRadius;
-		this.outerRadius = outerRadius;
-		this.farRadius = farRadius;
+		this.coreRadius = settings.coreRadius;
+		this.diskRadius = settings.diskRadius;
+		this.farRadius = settings.farRadius;
+		this.orbitAngleFactor = settings.orbitAngleFactor;
+		this.orbitExcentricityCore = settings.orbitExcentricityCore;
+		this.orbitExcentricityDisk = settings.orbitExcentricityDisk;
 
-		stars = generateStars(starsCount);
+		stars = generateStars(settings.starsCount);
 	}
 
 	function generateStars(count:Int):Array<Star> {
 		var random = new Random(randomSeed);
 
-		var angleCoef = 0.042;
+		// Distribute stars with the surface brightness law
+		var brightnessLaw = GalaxySurfaceBrightness.setupLaw(farRadius / 3, coreRadius, farRadius);
+		var randomOrbitRadius = InvertedCdf.forLaw(brightnessLaw, 48, 0, farRadius);
 
-		var brightnessLaw = GalaxySurfaceBrightnessLaw.get(0.01, farRadius / 3, coreRadius, farRadius);
-		var invertedCdf = InvertedCumulativeDistributionFunction.forLaw(brightnessLaw, 48, 0, farRadius);
-
-		var randomStarType = StarType.randomizer(random, StarTypeExtensions.occurence); 
+		var randomStarType = StarType.randomizer(random); 
 
 		return [
 			for (i in 1...count) {
-				// var radius = i * farRadius / count;
-				var orbitRadius = invertedCdf(random.GetFloat());
-
-				var orbit = new Orbit(center, orbitRadius, orbitRadius * getExcentricity(orbitRadius), orbitRadius * angleCoef);
 				var type = randomStarType();
+
+				// var radius = i * farRadius / count;
+				var orbitRadius = randomOrbitRadius(random.GetFloat());
+				var orbit = new Orbit(center, orbitRadius, orbitRadius * getOrbitExcentricity(orbitRadius), orbitRadius * orbitAngleFactor);
+
 				new Star(orbit.randomPoint(random), orbit, type, type.randomTemperature(random), type.randomRadius(random), type.randomLuminosity(random));
 			}
 		];
 	}
 
-	function getExcentricity(radius:Float):Float {
-		var e1 = 0.65;
-		var e2 = 1;
-
+	function getOrbitExcentricity(radius:Float):Float {
 		if (radius < coreRadius) {
 			// Core region of the galaxy. Innermost part is round
 			// excentricity increasing linear to the border of the core.
-			return 1 + (radius / coreRadius) * (e1 - 1);
-		} else if (radius > coreRadius && radius <= outerRadius) {
-			return e1 + (radius - coreRadius) / (outerRadius - coreRadius) * (e2 - e1);
-		} else if (radius > outerRadius && radius < farRadius) {
+			return 1 + (radius / coreRadius) * (orbitExcentricityCore - 1);
+		} else if (radius > coreRadius && radius <= diskRadius) {
+			return orbitExcentricityCore + (radius - coreRadius) / (diskRadius - coreRadius) * (orbitExcentricityDisk - orbitExcentricityCore);
+		} else if (radius > diskRadius && radius < farRadius) {
 			// excentricity is slowly reduced to 1.
-			return e2 + (radius - outerRadius) / (farRadius - outerRadius) * (1 - e2);
+			return orbitExcentricityDisk + (radius - diskRadius) / (farRadius - diskRadius) * (1 - orbitExcentricityDisk);
 		} else
 			return 1;
 	}
