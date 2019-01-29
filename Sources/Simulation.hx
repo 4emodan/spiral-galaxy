@@ -39,8 +39,8 @@ class Simulation {
 	public static inline var WIDTH = 320;
 	public static inline var HEIGHT = 240;
 
-	public function new() {
-		settings = new Settings(100000, 1.25);
+	public function new(settings: Settings) {
+		this.settings = settings;
 		gameControls = new GameControls(Mouse.get().toOption());
 		init();
 	}
@@ -57,7 +57,7 @@ class Simulation {
 		};
 
 		var center = {x: scaledWindow.w / 2, y: scaledWindow.h / 2};
-		galaxy = new Galaxy(center, 15, 200, 500, settings.starsCount);
+		galaxy = new Galaxy(center, settings.coreRadius, settings.diskRadius, settings.farRadius, settings.starsCount);
 	}
 
 	public function update():Void {
@@ -124,8 +124,7 @@ class Simulation {
 	var haloTemplate : Image = null;
 
 	function drawStar(star:Star, g:kha.graphics2.Graphics) {
-		var sunRadius = 0.075;
-		var starRadius = sunRadius * star.radius;
+		var starRadius = settings.sunRadius * star.radius;
 		var starColor = StarRenderer.getColor(star.temperature);
 		g.color = starColor;
 		// g.drawRect(star.center.x - starRadius, star.center.y - starRadius, starRadius * 2, starRadius * 2, starRadius * 2);
