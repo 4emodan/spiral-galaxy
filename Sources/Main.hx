@@ -1,11 +1,10 @@
 package;
 
-import kha.Color;
 import kha.Assets;
-import kha.Framebuffer;
 import kha.Scheduler;
 import kha.System;
-import Simulation;
+import simulation.Simulation;
+import simulation.Settings;
 
 class Main {
 	public static function main() {

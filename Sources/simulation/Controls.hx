@@ -1,12 +1,12 @@
-import js.html.DragEvent;
-import js.html.PointerEvent;
-import kha.input.Mouse;
+package simulation;
+
 import haxe.ds.Option;
-import Model.Point;
+import kha.input.Mouse;
+import core.model.Model.Point;
 
-using Utils.OptionExtensions;
+using core.Utils.OptionExtensions;
 
-class GameControls {
+class Controls {
 	var zoomEvent:Option<ZoomEvent> = None;
 	var dragEvent:Option<DragEvent> = None;
 	var mouseDown = false;

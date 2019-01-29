@@ -1,8 +1,8 @@
-package galaxy;
+package core.galaxy;
 
-import Model.Point;
-import Model.IntRange;
-import Model.FloatRange;
+import core.model.Model.Point;
+import core.model.Model.IntRange;
+import core.model.Model.FloatRange;
 
 typedef SolarUnit = Float;
 typedef Kelvin = Float;

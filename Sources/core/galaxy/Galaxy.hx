@@ -1,19 +1,13 @@
-package galaxy;
+package core.galaxy;
 
-import haxe.EnumTools;
-import kha.Scheduler;
-import kha.math.FastVector2;
-import kha.math.FastMatrix3;
 import kha.math.Random;
-import Ellipse;
-import Model.Point;
-import galaxy.Star;
-import galaxy.Brightness.GalaxySurfaceBrightness;
-import math.Random.InvertedCdf;
+import core.model.Model.Point;
+import core.math.Random.InvertedCdf;
+import core.galaxy.Star;
+import core.galaxy.Brightness.GalaxySurfaceBrightness;
 
 using Utils.OrbitUtils;
 using Utils.StarTypeUtils;
-using Star.StarTypeExtensions;
 
 class Galaxy {
 	public var center(default, null):Point;
@@ -28,7 +22,7 @@ class Galaxy {
 
 	var randomSeed:Int;
 
-	public function new(settings:Settings, center:Point) {
+	public function new(settings:GalaxySettings, center:Point) {
 		this.center = center;
 		this.coreRadius = settings.coreRadius;
 		this.diskRadius = settings.diskRadius;
@@ -47,7 +41,7 @@ class Galaxy {
 		var brightnessLaw = GalaxySurfaceBrightness.setupLaw(farRadius / 3, coreRadius, farRadius);
 		var randomOrbitRadius = InvertedCdf.forLaw(brightnessLaw, 48, 0, farRadius);
 
-		var randomStarType = StarType.randomizer(random); 
+		var randomStarType = StarType.randomizer(random);
 
 		return [
 			for (i in 1...count) {
@@ -75,4 +69,28 @@ class Galaxy {
 		} else
 			return 1;
 	}
+}
+
+class GalaxySettings implements DataClass {
+	var starsCount:Int;
+	var coreRadius:Float;
+	var diskRadius:Float;
+	var farRadius:Float;
+	var sunRadius:Float;
+
+	/**
+	 * Factor to calculate an orbit's rotation with it's radius.
+	 * The formula is: angle = radius * factor
+	 */
+	var orbitAngleFactor:Float;
+
+	/**
+	 * Excentricity of the orbit at the edge of the galaxy's core.
+	 */
+	var orbitExcentricityCore:Float;
+
+	/**
+	 * Excentricity of the orbit at the edge of the galaxy's disk.
+	 */
+	var orbitExcentricityDisk:Float;
 }

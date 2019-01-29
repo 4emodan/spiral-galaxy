@@ -1,4 +1,4 @@
-package galaxy;
+package core.galaxy;
 
 /**
  * Surface brightness according to de Vaucouleurs' law and Freeman formula for the galaxy's disk.

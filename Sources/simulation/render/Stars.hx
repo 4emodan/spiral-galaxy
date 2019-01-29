@@ -1,18 +1,15 @@
-package render;
+package simulation.render;
 
+import haxe.io.Bytes;
 import kha.graphics4.Usage;
 import kha.graphics4.TextureFormat;
-import kha.math.Random;
-import haxe.io.BytesData;
-import haxe.io.Bytes;
-import galaxy.Star;
 import kha.Image;
-import galaxy.Star.StarType;
 import kha.Color;
-import galaxy.Star.Kelvin;
-import math.Math.MyMath;
+import core.galaxy.Star.StarType;
+import core.galaxy.Star.Kelvin;
+import core.math.Math.MyMath;
 
-using galaxy.Star.StarTypeExtensions;
+using core.galaxy.Star.StarTypeExtensions;
 
 class StarRenderer {
 	/**
@@ -47,24 +44,8 @@ class StarRenderer {
 		return 1 / Math.log(x + MyMath.E);
 	}
 
-	/**
-	 * @return closest power of two value
-	 */
-	public static function powOfTwo(x:Int):Int {
-		if (x == 0) {
-			return 1;
-		}
-		--x;
-		x |= x >> 1;
-		x |= x >> 2;
-		x |= x >> 4;
-		x |= x >> 8;
-		x |= x >> 16;
-		return x + 1;
-	}
-
 	public static function generateHaloTemplate(size:Int):Image {
-		var w = powOfTwo(size);
+		var w = MyMath.powOfTwo(size);
 		var r = w / 2.0;
 
 		// We need to switch red and blue for some reason

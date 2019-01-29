@@ -1,19 +1,14 @@
+package simulation;
+
 import kha.math.FastMatrix3;
+import simulation.Model.Window;
+import simulation.Model.Viewport;
 
-typedef Point = {x:Float, y:Float};
-typedef Segment = {p1:Point, p2:Point};
-typedef IntRange = {from:Int, to:Int};
-typedef FloatRange = {from:Float, to:Float};
-typedef Window = {w:Float, h:Float}
-typedef Viewport = {originalWindow:Window, targetWindow:Window, w:Float, h:Float, origin:Point, scaleX:Float, scaleY:Float, scaleMatrix:FastMatrix3}
+using simulation.Model.ViewportExtensions;
 
-class ViewportExtensions {
-	public static function center(v:Viewport):Point {
-		return {x: v.origin.x + v.w / 2, y: v.origin.y + v.h / 2};
-	}
-
-	public static function applyZoom(v:Viewport, zoom:Float) {
-		var center = center(v);
+class ViewportUtils {
+	public static function applyZoom(v:Viewport, zoom:Float):Viewport {
+		var center = v.center();
 
 		v.w = v.targetWindow.w * zoom;
 		v.h = v.targetWindow.h * zoom;
@@ -22,6 +17,8 @@ class ViewportExtensions {
 		v.origin.x = center.x - v.w / 2;
 		v.origin.y = center.y - v.h / 2;
 		v.scaleMatrix = FastMatrix3.scale(v.scaleX, v.scaleY);
+
+        return v;
 	}
 
 	public static function setup(original:Window, target:Window):Viewport {

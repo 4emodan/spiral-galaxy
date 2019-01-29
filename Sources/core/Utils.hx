@@ -1,9 +1,11 @@
-import Model.FloatRange;
-import kha.math.Random;
-import Model.IntRange;
-import Model.Point;
-import kha.math.FastVector2;
+package core;
+
 import haxe.ds.Option;
+import kha.math.Random;
+import kha.math.FastVector2;
+import core.model.Model.FloatRange;
+import core.model.Model.IntRange;
+import core.model.Model.Point;
 
 class FastVector2Extensions {
 	public static function asPoint(v:FastVector2):Point {
@@ -38,5 +40,11 @@ class FloatUtils {
 		} else {
 			1;
 		}
+	}
+}
+
+class FastVector2Utils {
+	public static function asPoint(v:FastVector2):Point {
+		return {x: v.x, y: v.y};
 	}
 }

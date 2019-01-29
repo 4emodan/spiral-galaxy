@@ -1,20 +1,20 @@
-package galaxy;
+package core.galaxy;
 
 import haxe.rtti.CType.Typedef;
-import galaxy.Star.SolarUnit;
-import galaxy.Star.Kelvin;
-import galaxy.Star.StarType;
 import kha.math.FastMatrix3;
 import kha.math.FastVector2;
 import kha.math.Random;
-import Model.Point;
-import galaxy.Orbit;
+import core.model.Model.Point;
+import core.galaxy.Star.SolarUnit;
+import core.galaxy.Star.Kelvin;
+import core.galaxy.Star.StarType;
+import core.galaxy.Orbit;
 
-using Utils.FastVector2Extensions;
-using galaxy.Star.StarTypeExtensions;
-using Utils.IntRangeUtils;
-using Utils.FloatRangeUtils;
-using Utils.FloatUtils;
+using core.Utils.FastVector2Extensions;
+using core.Utils.IntRangeUtils;
+using core.Utils.FloatRangeUtils;
+using core.Utils.FloatUtils;
+using Star.StarTypeExtensions;
 
 class OrbitUtils {
 	public static function randomPoint(o:Orbit, r:Random):Point {

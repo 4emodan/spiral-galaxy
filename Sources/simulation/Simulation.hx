@@ -1,31 +1,29 @@
-import Model.Window;
-import haxe.ds.Map;
+package simulation;
+
 import kha.Image;
 import kha.input.Mouse;
-import galaxy.Orbit;
-import galaxy.Star;
-import kha.Scheduler;
-import kha.math.FastVector2;
-import kha.math.Random;
 import kha.Framebuffer;
 import kha.Color;
-import kha.math.FastMatrix3;
 import kha.System;
-import Ellipse;
-import Model.Point;
-import Settings;
-import galaxy.Galaxy;
-import GameControls;
-import render.Stars.StarRenderer;
-import Model.Viewport;
+import core.galaxy.Galaxy;
+import core.galaxy.Orbit;
+import core.galaxy.Star;
+import core.model.Ellipse;
+import simulation.render.Stars.StarRenderer;
+import simulation.Settings;
+import simulation.Controls;
+import simulation.Model.Viewport;
+import simulation.Model.Window;
 
-using Utils.OptionExtensions;
-using Ellipse.EllipseExtensions;
-using Model.ViewportExtensions;
+using core.Utils.OptionExtensions;
+using core.model.Ellipse.EllipseExtensions;
+using simulation.Settings.SettingsExtensions;
+using simulation.Model.ViewportExtensions;
+using simulation.Utils.ViewportUtils;
 
 class Simulation {
 	var settings:Settings;
-	var gameControls:GameControls;
+	var gameControls:Controls;
 	//
 	var deepSpaceColor = Color.Black;
 	var galaxy:Galaxy;
@@ -38,7 +36,7 @@ class Simulation {
 
 	public function new(settings:Settings) {
 		this.settings = settings;
-		gameControls = new GameControls(Mouse.get().toOption());
+		gameControls = new Controls(Mouse.get().toOption());
 		init();
 	}
 
@@ -46,8 +44,8 @@ class Simulation {
 		var original:Window = {w: System.windowWidth(0), h: System.windowHeight(0)};
 		var target:Window = {w: WIDTH, h: HEIGHT};
 
-		viewport = ViewportExtensions.setup(original, target);
-		galaxy = new Galaxy(settings, viewport.center());
+		viewport = ViewportUtils.setup(original, target);
+		galaxy = new Galaxy(settings.galaxySettings(), viewport.center());
 	}
 
 	public function update():Void {
@@ -117,12 +115,12 @@ class Simulation {
 
 	function debugDraw(g:kha.graphics2.Graphics) {
 		function drawEllipse(e:Ellipse) {
-			for (s in e.segments()) {
+			for (s in e.segments(36)) {
 				g.drawLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y, 0.5);
 			}
 		}
 		function drawOrbit(orbit:Orbit, g:kha.graphics2.Graphics) {
-			var e = new Ellipse(orbit.center, orbit.angle, orbit.a, orbit.b, 36);
+			var e = new Ellipse(orbit.center, orbit.angle, orbit.a, orbit.b);
 			drawEllipse(e);
 		}
 
@@ -133,11 +131,11 @@ class Simulation {
 		}
 
 		g.color = Color.Yellow;
-		var circle = new Ellipse(galaxy.center, 0, settings.coreRadius, settings.coreRadius, 36);
+		var circle = new Ellipse(galaxy.center, 0, settings.coreRadius, settings.coreRadius);
 		drawEllipse(circle);
 
 		g.color = Color.Yellow;
-		circle = new Ellipse(galaxy.center, 0, settings.diskRadius, settings.diskRadius, 36);
+		circle = new Ellipse(galaxy.center, 0, settings.diskRadius, settings.diskRadius);
 		drawEllipse(circle);
 	}
 }

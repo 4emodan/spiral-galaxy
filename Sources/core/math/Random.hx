@@ -1,4 +1,4 @@
-package math;
+package core.math;
 
 import haxe.ds.Vector;
 

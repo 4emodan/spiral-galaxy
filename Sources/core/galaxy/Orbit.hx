@@ -1,6 +1,6 @@
-package galaxy;
+package core.galaxy;
 
-import Model.Point;
+import core.model.Model.Point;
 
 class Orbit implements DataClass {
 	var center:Point;
