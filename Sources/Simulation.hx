@@ -27,8 +27,7 @@ class Simulation {
 	var settings:Settings;
 	var gameControls:GameControls;
 	//
-	var colBg = Color.Black;
-	var colMain = Color.White;
+	var deepSpaceColor = Color.Black;
 	var galaxy:Galaxy;
 	//
 	var viewport:Viewport;
@@ -45,9 +44,9 @@ class Simulation {
 
 	function init() {
 		var original:Window = {w: System.windowWidth(0), h: System.windowHeight(0)};
-		var target:Window = {w: WIDTH, h:HEIGHT};
+		var target:Window = {w: WIDTH, h: HEIGHT};
 
-		viewport = ViewportExtensions.setup(original, target); 
+		viewport = ViewportExtensions.setup(original, target);
 		galaxy = new Galaxy(viewport.center(), settings.coreRadius, settings.diskRadius, settings.farRadius, settings.starsCount);
 	}
 
@@ -81,16 +80,12 @@ class Simulation {
 	public function render(frame:Framebuffer):Void {
 		var g = frame.g2;
 		g.begin();
-		g.clear(colBg);
+		g.clear(deepSpaceColor);
 
 		g.pushTransformation(viewport.scaleMatrix);
 		g.pushTranslation(-viewport.origin.x * viewport.scaleX, -viewport.origin.y * viewport.scaleY);
 
-		g.color = colMain;
-
-		// for (star in galaxy.stars) {
-		// 	drawOrbit(star.orbit, g);
-		// }
+		g.color = Color.White;
 
 		for (star in galaxy.stars) {
 			drawStar(star, g);
@@ -103,41 +98,32 @@ class Simulation {
 		g.end();
 	}
 
-	var haloBank:Map<Int, Image> = [];
-	var haloTemplate:Image = null;
+	private var haloTemplate:Image = null;
 
 	function drawStar(star:Star, g:kha.graphics2.Graphics) {
 		var starRadius = settings.sunRadius * star.radius;
 		var starColor = StarRenderer.getColor(star.temperature);
-		g.color = starColor;
+
+		g.color = starColor; // Tint halo with star color
 
 		var halo = haloTemplate;
 		if (halo == null) {
-			haloTemplate = StarRenderer.getHalo(star);
+			haloTemplate = StarRenderer.generateHaloTemplate(256);
 			halo = haloTemplate;
 		}
-		var sw = starRadius * 4;
-		g.drawScaledImage(halo, star.center.x - sw / 2, star.center.y - sw / 2, sw, sw);
-	}
-
-	function drawOrbit(orbit:Orbit, g:kha.graphics2.Graphics) {
-		var e = new Ellipse(orbit.center, orbit.angle, orbit.a, orbit.b, 36);
-		for (s in e.segments()) {
-			g.drawLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y, 0.5);
-		}
+		var haloSize = starRadius * 4; // TODO: Depends on luminosity and star size
+		g.drawScaledImage(halo, star.center.x - haloSize / 2, star.center.y - haloSize / 2, haloSize, haloSize);
 	}
 
 	function debugDraw(g:kha.graphics2.Graphics) {
-		var t = 60000.0;
-		var x = 0.0;
-		while (t >= 2000) {
-			g.color = StarRenderer.getColor(t);
-			g.drawRect(x, 0, 1, 1);
-			if (t == 7500) {
-				g.drawRect(x, -5, 1, 10);
+		function drawOrbit(orbit:Orbit, g:kha.graphics2.Graphics) {
+			var e = new Ellipse(orbit.center, orbit.angle, orbit.a, orbit.b, 36);
+			for (s in e.segments()) {
+				g.drawLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y, 0.5);
 			}
-			x += 1;
-			t -= 100;
+		}
+		for (star in galaxy.stars) {
+			drawOrbit(star.orbit, g);
 		}
 	}
 }

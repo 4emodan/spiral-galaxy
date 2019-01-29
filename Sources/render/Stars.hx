@@ -15,6 +15,10 @@ import math.Math.MyMath;
 using galaxy.Star.StarTypeExtensions;
 
 class StarRenderer {
+	/**
+	 * Color according to spectral classification.
+	 * @see https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Hertzsprung-Russel_StarData.png/440px-Hertzsprung-Russel_StarData.png
+	 */
 	public static function getColor(temp:Kelvin):Color {
 		var white = 7500.0;
 		var min = StarType.M.temperature().from;
@@ -43,6 +47,9 @@ class StarRenderer {
 		return 1 / Math.log(x + MyMath.E);
 	}
 
+	/**
+	 * @return closest power of two value
+	 */
 	public static function powOfTwo(x:Int):Int {
 		if (x == 0) {
 			return 1;
@@ -56,16 +63,12 @@ class StarRenderer {
 		return x + 1;
 	}
 
-	public static function getHalo(star:Star):Image {
-		var w = powOfTwo(Std.int(star.radius * 4 * 0.075));
-		if (w < 256)
-			w = 256;
+	public static function generateHaloTemplate(size:Int):Image {
+		var w = powOfTwo(size);
 		var r = w / 2.0;
 
 		// We need to switch red and blue for some reason
-		var color = getColor(star.temperature);
 		var texColor = Color.White;
-		// var texColor = Color.fromFloats(color.B, color.G, color.R);
 
 		var bytes = Bytes.alloc(w * w * 4);
 		var pixelCount = w * w;
@@ -79,7 +82,6 @@ class StarRenderer {
 			d = Math.sqrt(x * x + y * y);
 			texColor.A = MyMath.clamp(1.0 - Math.abs(d / r), 0, 1);
 			bytes.setInt32(i * 4, texColor.value);
-			// bytes.setInt32(i * 4, 0x800000FF);
 		}
 		return Image.fromBytes(bytes, w, w, TextureFormat.RGBA32, Usage.StaticUsage);
 	}
