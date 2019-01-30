@@ -67,8 +67,8 @@ class Simulation {
 			switch (e) {
 				case DragMove(x, y, dx, dy):
 					{
-						viewport.origin.x -= dx / viewport.scaleX;
-						viewport.origin.y -= dy / viewport.scaleY;
+						viewport.origin.x -= dx / viewport.scale;
+						viewport.origin.y -= dy / viewport.scale;
 					}
 				default:
 			}
@@ -81,7 +81,7 @@ class Simulation {
 		g.clear(deepSpaceColor);
 
 		g.pushTransformation(viewport.scaleMatrix);
-		g.pushTranslation(-viewport.origin.x * viewport.scaleX, -viewport.origin.y * viewport.scaleY);
+		g.pushTranslation(viewport.margin.x - viewport.origin.x * viewport.scale, viewport.margin.y - viewport.origin.y * viewport.scale);
 
 		g.color = Color.White;
 
@@ -114,28 +114,33 @@ class Simulation {
 	}
 
 	function debugDraw(g:kha.graphics2.Graphics) {
-		function drawEllipse(e:Ellipse) {
-			for (s in e.segments(36)) {
-				g.drawLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y, 0.5);
-			}
-		}
-		function drawOrbit(orbit:Orbit, g:kha.graphics2.Graphics) {
-			var e = new Ellipse(orbit.center, orbit.angle, orbit.a, orbit.b);
-			drawEllipse(e);
-		}
+		// Draw orbits 
+		// function drawEllipse(e:Ellipse) {
+		// 	for (s in e.segments(36)) {
+		// 		g.drawLine(s.p1.x, s.p1.y, s.p2.x, s.p2.y, 0.5);
+		// 	}
+		// }
+		// function drawOrbit(orbit:Orbit, g:kha.graphics2.Graphics) {
+		// 	var e = new Ellipse(orbit.center, orbit.angle, orbit.a, orbit.b);
+		// 	drawEllipse(e);
+		// }
 
-		var count = 100;
-		var width = Std.int(galaxy.stars.length / count);
-		for (i in 0...count) {
-			drawOrbit(galaxy.stars[i * width].orbit, g);
-		}
+		// var count = 100;
+		// var width = Std.int(galaxy.stars.length / count);
+		// for (i in 0...count) {
+		// 	drawOrbit(galaxy.stars[i * width].orbit, g);
+		// }
 
-		g.color = Color.Yellow;
-		var circle = new Ellipse(galaxy.center, 0, settings.coreRadius, settings.coreRadius);
-		drawEllipse(circle);
+		// g.color = Color.Yellow;
+		// var circle = new Ellipse(galaxy.center, 0, settings.coreRadius, settings.coreRadius);
+		// drawEllipse(circle);
 
-		g.color = Color.Yellow;
-		circle = new Ellipse(galaxy.center, 0, settings.diskRadius, settings.diskRadius);
-		drawEllipse(circle);
+		// g.color = Color.Yellow;
+		// circle = new Ellipse(galaxy.center, 0, settings.diskRadius, settings.diskRadius);
+		// drawEllipse(circle);
+
+		// Draw viewport
+		// g.color = Color.Yellow;
+		// g.drawRect(viewport.origin.x, viewport.origin.y, viewport.w, viewport.h);
 	}
 }

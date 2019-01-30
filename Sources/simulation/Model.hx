@@ -4,7 +4,7 @@ import kha.math.FastMatrix3;
 import core.model.Model.Point;
 
 typedef Window = {w:Float, h:Float}
-typedef Viewport = {originalWindow:Window, targetWindow:Window, w:Float, h:Float, origin:Point, scaleX:Float, scaleY:Float, scaleMatrix:FastMatrix3}
+typedef Viewport = {originalWindow:Window, targetWindow:Window, w:Float, h:Float, origin:Point, margin:Point, scale:Float, scaleMatrix:FastMatrix3}
 
 class ViewportExtensions {
 	public static function center(v:Viewport):Point {
